@@ -338,7 +338,10 @@ export function Dashboard({ servers, toggleServer, refreshServers }: DashboardPr
                       borderTop: '1px solid var(--border-light)',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: '12px'
+                      gap: '16px',
+                      maxHeight: '260px',
+                      overflowY: 'auto',
+                      paddingRight: '6px'
                     }}>
                       <div>
                         <h4 style={{ fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '6px' }}>Tools</h4>
