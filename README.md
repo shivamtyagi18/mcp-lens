@@ -5,7 +5,7 @@
   </p>
   <p align="center">
     <a href="https://github.com/shivamtyagi18/mcp-lens/stargazers"><img src="https://img.shields.io/github/stars/shivamtyagi18/mcp-lens?style=for-the-badge&color=8FA396" alt="Stars"></a>
-    <a href="https://github.com/shivamtyagi18/mcp-lens/blob/main/LICENSE"><img src="https://img.shields.io/github/license/shivamtyagi18/mcp-lens?style=for-the-badge&color=8FA396" alt="License"></a>
+    <a href="https://github.com/shivamtyagi18/mcp-lens/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-8FA396?style=for-the-badge" alt="License"></a>
     <img src="https://img.shields.io/badge/PRs-welcome-8FA396?style=for-the-badge" alt="PRs Welcome">
   </p>
 </p>
