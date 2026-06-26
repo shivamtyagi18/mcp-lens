@@ -125,11 +125,13 @@ export class McpManager {
     this.broadcast({ type: 'status_change', serverId: id, status: 'starting' });
 
     try {
-      // Merge parent process env with server config env
-      const env = {
-        ...process.env,
-        ...(serverInfo.config.env || {})
-      };
+      // Merge parent process env with server config env, filtering out undefined values
+      const env: Record<string, string> = {};
+      for (const [key, value] of Object.entries({ ...process.env, ...(serverInfo.config.env || {}) })) {
+        if (value !== undefined) {
+          env[key] = value;
+        }
+      }
 
       const transport = new StdioClientTransport({
         command: serverInfo.config.command,
@@ -141,11 +143,7 @@ export class McpManager {
         name: 'mcp-lens-inspector',
         version: '1.0.0'
       }, {
-        capabilities: {
-          tools: {},
-          resources: {},
-          prompts: {}
-        }
+        capabilities: {}
       });
 
       // Hook up stderr/stdout logs using casting workaround since process is private

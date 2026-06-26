@@ -4,8 +4,9 @@
   "description": "Backend for mcp-lens to parse configurations and manage MCP processes",
   "main": "dist/index.js",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "tsc && node dist/index.js",
     "build": "tsc",
     "start": "node dist/index.js"
   },
