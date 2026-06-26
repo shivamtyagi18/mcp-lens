@@ -4,6 +4,9 @@
   "description": "Interactive Visual MCP Server Dashboard & Tester",
   "private": true,
   "license": "MIT",
+  "bin": {
+    "mcp-lens": "./backend/dist/index.js"
+  },
   "workspaces": [
     "backend",
     "frontend"

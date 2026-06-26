@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
@@ -98,9 +99,25 @@ wss.on('connection', (ws: WebSocket) => {
   }));
 });
 
+import { exec } from 'child_process';
+
+function openBrowser(url: string) {
+  const start = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
+  exec(`${start} ${url}`, (err) => {
+    if (err) console.error('Failed to open browser:', err);
+  });
+}
+
 httpServer.listen(PORT, () => {
+  const url = `http://localhost:${PORT}`;
   console.log(`========================================`);
   console.log(`  mcp-lens backend running on port ${PORT}`);
   console.log(`  Scanning workspace: ${localWorkspace}`);
+  console.log(`  Opening browser to: ${url}`);
   console.log(`========================================`);
+  
+  // Auto-open browser (unless explicitly disabled)
+  if (process.env.OPEN_BROWSER !== 'false') {
+    openBrowser(url);
+  }
 });
