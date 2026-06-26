@@ -79,6 +79,168 @@ export function Dashboard({ servers, toggleServer, refreshServers }: DashboardPr
     }
   };
 
+  const activeServers = filteredServers.filter((s) => s.status === 'connected' || s.status === 'starting');
+  const inactiveServers = filteredServers.filter((s) => s.status !== 'connected' && s.status !== 'starting');
+
+  const renderServerCard = (server: McpServerInfo) => {
+    const isRunning = server.status === 'connected';
+    const isStarting = server.status === 'starting';
+    const isError = server.status === 'error';
+
+    return (
+      <div
+        key={server.id}
+        className="server-card"
+        style={getSourceStyles(server.source)}
+      >
+        <div>
+          <div className="server-card-header">
+            <div className="server-identity">
+              <span className="server-name">{server.name}</span>
+              <span className="server-source-badge">{getSourceLabel(server.source)}</span>
+            </div>
+
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={isRunning || isStarting}
+                disabled={isStarting}
+                onChange={(e) => toggleServer(server.id, e.target.checked)}
+              />
+              <span className="slider"></span>
+            </label>
+          </div>
+
+          <div className="server-details">
+            <div className="detail-row">
+              <span className="detail-label">Executable / Command</span>
+              <span className="detail-value-code">{server.config.command} {server.config.args.join(' ')}</span>
+            </div>
+
+            {server.config.env && Object.keys(server.config.env).length > 0 && (
+              <div className="detail-row">
+                <span className="detail-label">Env Variables</span>
+                <div className="env-pills">
+                  {Object.keys(server.config.env).map((k) => (
+                    <span key={k} className="env-pill">{k}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div>
+          {isError && server.error && (
+            <div style={{
+              background: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              borderRadius: 'var(--radius-sm)',
+              padding: '10px 12px',
+              color: 'var(--color-error)',
+              fontSize: '0.85rem',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '8px',
+              marginBottom: '16px'
+            }}>
+              <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
+              <span style={{ wordBreak: 'break-word' }}>{server.error}</span>
+            </div>
+          )}
+
+          <div className="server-card-footer">
+            <span className={`status-badge ${server.status}`}>
+              <span style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: 'currentColor',
+                boxShadow: isRunning ? '0 0 8px currentColor' : 'none'
+              }}></span>
+              {server.status}
+            </span>
+
+            {isRunning && (
+              <div className="capabilities-summary">
+                <div className="cap-badge" title="Tools">
+                  <Cpu size={14} />
+                  <span>{server.tools?.length || 0}</span>
+                </div>
+                <div className="cap-badge" title="Resources">
+                  <HardDrive size={14} />
+                  <span>{server.resources?.length || 0}</span>
+                </div>
+                <div className="cap-badge" title="Prompts">
+                  <HelpCircle size={14} />
+                  <span>{server.prompts?.length || 0}</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {isRunning && (
+            <div style={{
+              marginTop: '16px',
+              paddingTop: '16px',
+              borderTop: '1px solid var(--border-light)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+              maxHeight: '260px',
+              overflowY: 'auto',
+              paddingRight: '6px'
+            }}>
+              <div>
+                <h4 style={{ fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '6px' }}>Tools</h4>
+                {server.tools && server.tools.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    {server.tools.map((t) => (
+                      <div key={t.name} style={{
+                        background: 'rgba(0,0,0,0.15)',
+                        padding: '6px 8px',
+                        borderRadius: '4px',
+                        fontSize: '0.75rem',
+                        border: '1px solid rgba(255,255,255,0.02)'
+                      }}>
+                        <strong style={{ color: 'var(--color-primary)' }}>{t.name}</strong>
+                        <div style={{ color: 'var(--text-secondary)', fontSize: '0.7rem', marginTop: '2px' }}>{t.description || 'No description'}</div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>No tools exposed</span>
+                )}
+              </div>
+
+              <div>
+                <h4 style={{ fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '6px' }}>Resources</h4>
+                {server.resources && server.resources.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    {server.resources.map((r) => (
+                      <div key={r.uri} style={{
+                        background: 'rgba(0,0,0,0.15)',
+                        padding: '6px 8px',
+                        borderRadius: '4px',
+                        fontSize: '0.75rem',
+                        border: '1px solid rgba(255,255,255,0.02)'
+                      }}>
+                        <strong style={{ color: 'var(--color-windsurf)' }}>{r.name}</strong>
+                        <div style={{ color: 'var(--text-muted)', fontSize: '0.7rem', wordBreak: 'break-all' }}>{r.uri}</div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>No resources exposed</span>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       {/* Stats Board */}
@@ -195,7 +357,7 @@ export function Dashboard({ servers, toggleServer, refreshServers }: DashboardPr
         </button>
       </div>
 
-      {/* Grid of Servers */}
+      {/* Grid of Servers grouped by status */}
       {filteredServers.length === 0 ? (
         <div style={{
           background: 'var(--bg-panel)',
@@ -212,165 +374,61 @@ export function Dashboard({ servers, toggleServer, refreshServers }: DashboardPr
           </p>
         </div>
       ) : (
-        <div className="server-grid">
-          {filteredServers.map((server) => {
-            const isRunning = server.status === 'connected';
-            const isStarting = server.status === 'starting';
-            const isError = server.status === 'error';
-
-            return (
-              <div
-                key={server.id}
-                className="server-card"
-                style={getSourceStyles(server.source)}
-              >
-                <div>
-                  <div className="server-card-header">
-                    <div className="server-identity">
-                      <span className="server-name">{server.name}</span>
-                      <span className="server-source-badge">{getSourceLabel(server.source)}</span>
-                    </div>
-
-                    <label className="switch">
-                      <input
-                        type="checkbox"
-                        checked={isRunning || isStarting}
-                        disabled={isStarting}
-                        onChange={(e) => toggleServer(server.id, e.target.checked)}
-                      />
-                      <span className="slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="server-details">
-                    <div className="detail-row">
-                      <span className="detail-label">Executable / Command</span>
-                      <span className="detail-value-code">{server.config.command} {server.config.args.join(' ')}</span>
-                    </div>
-
-                    {server.config.env && Object.keys(server.config.env).length > 0 && (
-                      <div className="detail-row">
-                        <span className="detail-label">Env Variables</span>
-                        <div className="env-pills">
-                          {Object.keys(server.config.env).map((k) => (
-                            <span key={k} className="env-pill">{k}</span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  {isError && server.error && (
-                    <div style={{
-                      background: 'rgba(239, 68, 68, 0.1)',
-                      border: '1px solid rgba(239, 68, 68, 0.2)',
-                      borderRadius: 'var(--radius-sm)',
-                      padding: '10px 12px',
-                      color: 'var(--color-error)',
-                      fontSize: '0.85rem',
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '8px',
-                      marginBottom: '16px'
-                    }}>
-                      <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
-                      <span style={{ wordBreak: 'break-word' }}>{server.error}</span>
-                    </div>
-                  )}
-
-                  <div className="server-card-footer">
-                    <span className={`status-badge ${server.status}`}>
-                      <span style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        background: 'currentColor',
-                        boxShadow: isRunning ? '0 0 8px currentColor' : 'none'
-                      }}></span>
-                      {server.status}
-                    </span>
-
-                    {isRunning && (
-                      <div className="capabilities-summary">
-                        <div className="cap-badge" title="Tools">
-                          <Cpu size={14} />
-                          <span>{server.tools?.length || 0}</span>
-                        </div>
-                        <div className="cap-badge" title="Resources">
-                          <HardDrive size={14} />
-                          <span>{server.resources?.length || 0}</span>
-                        </div>
-                        <div className="cap-badge" title="Prompts">
-                          <HelpCircle size={14} />
-                          <span>{server.prompts?.length || 0}</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {isRunning && (
-                    <div style={{
-                      marginTop: '16px',
-                      paddingTop: '16px',
-                      borderTop: '1px solid var(--border-light)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '16px',
-                      maxHeight: '260px',
-                      overflowY: 'auto',
-                      paddingRight: '6px'
-                    }}>
-                      <div>
-                        <h4 style={{ fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '6px' }}>Tools</h4>
-                        {server.tools && server.tools.length > 0 ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            {server.tools.map((t) => (
-                              <div key={t.name} style={{
-                                background: 'rgba(0,0,0,0.15)',
-                                padding: '6px 8px',
-                                borderRadius: '4px',
-                                fontSize: '0.75rem',
-                                border: '1px solid rgba(255,255,255,0.02)'
-                              }}>
-                                <strong style={{ color: 'var(--color-primary)' }}>{t.name}</strong>
-                                <div style={{ color: 'var(--text-secondary)', fontSize: '0.7rem', marginTop: '2px' }}>{t.description || 'No description'}</div>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>No tools exposed</span>
-                        )}
-                      </div>
-
-                      <div>
-                        <h4 style={{ fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '6px' }}>Resources</h4>
-                        {server.resources && server.resources.length > 0 ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            {server.resources.map((r) => (
-                              <div key={r.uri} style={{
-                                background: 'rgba(0,0,0,0.15)',
-                                padding: '6px 8px',
-                                borderRadius: '4px',
-                                fontSize: '0.75rem',
-                                border: '1px solid rgba(255,255,255,0.02)'
-                              }}>
-                                <strong style={{ color: 'var(--color-windsurf)' }}>{r.name}</strong>
-                                <div style={{ color: 'var(--text-muted)', fontSize: '0.7rem', wordBreak: 'break-all' }}>{r.uri}</div>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>No resources exposed</span>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+          {activeServers.length > 0 && (
+            <div>
+              <h3 style={{
+                fontSize: '0.9rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                fontWeight: 600,
+                color: 'var(--color-connected)',
+                marginBottom: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <span style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: 'currentColor',
+                  boxShadow: '0 0 8px currentColor'
+                }}></span>
+                Active Servers ({activeServers.length})
+              </h3>
+              <div className="server-grid">
+                {activeServers.map((server) => renderServerCard(server))}
               </div>
-            );
-          })}
+            </div>
+          )}
+
+          {inactiveServers.length > 0 && (
+            <div>
+              <h3 style={{
+                fontSize: '0.9rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                marginBottom: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <span style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: 'currentColor'
+                }}></span>
+                Inactive Servers ({inactiveServers.length})
+              </h3>
+              <div className="server-grid">
+                {inactiveServers.map((server) => renderServerCard(server))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
