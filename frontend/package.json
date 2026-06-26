@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Frontend for mcp-lens visual dashboard",
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

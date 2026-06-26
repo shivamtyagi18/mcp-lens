@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Interactive Visual MCP Server Dashboard & Tester",
   "private": true,
+  "license": "MIT",
   "workspaces": [
     "backend",
     "frontend"
