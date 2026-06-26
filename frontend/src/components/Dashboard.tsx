@@ -11,7 +11,6 @@ interface DashboardProps {
 export function Dashboard({ servers, toggleServer, refreshServers }: DashboardProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSource, setFilterSource] = useState<string>('all');
-  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = async () => {
@@ -218,7 +217,6 @@ export function Dashboard({ servers, toggleServer, refreshServers }: DashboardPr
             const isRunning = server.status === 'connected';
             const isStarting = server.status === 'starting';
             const isError = server.status === 'error';
-            const isExpanded = expandedId === server.id;
 
             return (
               <div
@@ -313,25 +311,6 @@ export function Dashboard({ servers, toggleServer, refreshServers }: DashboardPr
                   </div>
 
                   {isRunning && (
-                    <button
-                      onClick={() => setExpandedId(isExpanded ? null : server.id)}
-                      className="btn"
-                      style={{
-                        width: '100%',
-                        marginTop: '16px',
-                        background: 'transparent',
-                        border: '1px solid var(--border-light)',
-                        color: 'var(--text-secondary)',
-                        padding: '8px 12px',
-                        fontSize: '0.8rem',
-                        borderRadius: 'var(--radius-sm)'
-                      }}
-                    >
-                      {isExpanded ? 'Hide Details' : 'Show Details & Capabilities'}
-                    </button>
-                  )}
-
-                  {isExpanded && isRunning && (
                     <div style={{
                       marginTop: '16px',
                       paddingTop: '16px',
