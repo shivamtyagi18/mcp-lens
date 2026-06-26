@@ -50,6 +50,16 @@ export function Dashboard({ servers, toggleServer, refreshServers }: DashboardPr
           '--origin-color': 'var(--color-windsurf)',
           '--origin-glow': 'var(--color-windsurf-glow)',
         } as React.CSSProperties;
+      case 'antigravity':
+        return {
+          '--origin-color': 'var(--color-antigravity)',
+          '--origin-glow': 'var(--color-antigravity-glow)',
+        } as React.CSSProperties;
+      case 'codex':
+        return {
+          '--origin-color': 'var(--color-codex)',
+          '--origin-glow': 'var(--color-codex-glow)',
+        } as React.CSSProperties;
       default:
         return {
           '--origin-color': 'var(--color-primary)',
@@ -64,6 +74,8 @@ export function Dashboard({ servers, toggleServer, refreshServers }: DashboardPr
       case 'cursor-global': return 'Cursor Global';
       case 'cursor-local': return 'Cursor Local';
       case 'windsurf': return 'Windsurf';
+      case 'antigravity': return 'Antigravity';
+      case 'codex': return 'Codex';
       default: return source;
     }
   };
@@ -160,6 +172,8 @@ export function Dashboard({ servers, toggleServer, refreshServers }: DashboardPr
             <option value="cursor-global">Cursor Global</option>
             <option value="cursor-local">Cursor Local</option>
             <option value="windsurf">Windsurf</option>
+            <option value="antigravity">Antigravity</option>
+            <option value="codex">Codex</option>
           </select>
         </div>
 

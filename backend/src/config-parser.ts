@@ -5,11 +5,12 @@ import { McpRawConfig, McpServerInfo, ConfigSource } from './types.js';
 
 const HOME = os.homedir();
 
-// Standard locations for MCP configs on macOS (can extend to Windows/Linux if needed)
 const CONFIG_PATHS: Record<Exclude<ConfigSource, 'cursor-local'>, string> = {
   'claude': path.join(HOME, 'Library/Application Support/Claude/claude_desktop_config.json'),
   'cursor-global': path.join(HOME, '.cursor/mcp.json'),
-  'windsurf': path.join(HOME, '.codeium/windsurf/mcp_config.json')
+  'windsurf': path.join(HOME, '.codeium/windsurf/mcp_config.json'),
+  'antigravity': path.join(HOME, '.gemini/antigravity/mcp_config.json'),
+  'codex': path.join(HOME, '.gemini/antigravity-ide/mcp_config.json')
 };
 
 /**

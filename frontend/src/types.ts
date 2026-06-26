@@ -1,4 +1,4 @@
-export type ConfigSource = 'claude' | 'cursor-global' | 'cursor-local' | 'windsurf';
+export type ConfigSource = 'claude' | 'cursor-global' | 'cursor-local' | 'windsurf' | 'antigravity' | 'codex';
 
 export interface McpServerConfig {
   command: string;
